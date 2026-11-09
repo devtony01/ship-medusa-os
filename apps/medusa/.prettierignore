@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.medusa/
+.cache/
+.turbo/
+*.tsbuildinfo
+.DS_Store
+.prettierignore

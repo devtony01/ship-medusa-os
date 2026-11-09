@@ -1,0 +1,46 @@
+{
+  "name": "medusa",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "medusa build",
+    "start": "medusa start",
+    "dev": "medusa develop",
+    "migrate": "medusa db:migrate",
+    "precommit": "lint-staged"
+  },
+  "dependencies": {
+    "@medusajs/cli": "catalog:",
+    "@medusajs/framework": "catalog:",
+    "@medusajs/medusa": "catalog:",
+    "@medusajs/types": "catalog:",
+    "@medusajs/utils": "catalog:",
+    "app-constants": "workspace:*",
+    "app-types": "workspace:*",
+    "enums": "workspace:*",
+    "http-errors": "2.0.0",
+    "schemas": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@swc/core": "1.5.7",
+    "@types/http-errors": "2.0.4",
+    "eslint-config": "workspace:*",
+    "lint-staged": "catalog:",
+    "prettier": "catalog:",
+    "prettier-config": "workspace:*",
+    "ts-node": "10.9.2",
+    "tsconfig": "workspace:*",
+    "typescript": "catalog:"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "bash -c 'tsc --noEmit'",
+      "prettier --write --config .prettierrc.json"
+    ],
+    "!*.ts": [
+      "prettier --write --config .prettierrc.json"
+    ]
+  }
+}

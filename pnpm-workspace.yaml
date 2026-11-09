@@ -1,0 +1,19 @@
+packages:
+  - ./apps/*
+  - "!apps/*/.medusa/**"
+  - ./packages/*
+
+catalog:
+  typescript: 5.6.2
+  eslint: 9.31.0
+  prettier: 3.6.2
+  lint-staged: 15.4.3
+  zod: 3.25.76
+
+  "@types/node": 20.11.15
+
+  "@medusajs/framework": 2.11.1
+  "@medusajs/medusa": 2.11.1
+  "@medusajs/cli": 2.11.1
+  "@medusajs/types": 2.11.1
+  "@medusajs/utils": 2.11.1

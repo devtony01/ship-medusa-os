@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.medusa/
+.cache/
+.turbo/
+*.tsbuildinfo
+.env
+.env.*
+!.env.template
+.DS_Store

@@ -1,0 +1,21 @@
+{
+  "name": "eslint-config",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./node.js",
+  "types": "./node.d.ts",
+  "exports": {
+    "./node": {
+      "types": "./node.d.ts",
+      "default": "./node.js"
+    }
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "5.2.1",
+    "eslint": "catalog:",
+    "eslint-plugin-no-relative-import-paths": "^1.6.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "prettier-config": "workspace:*"
+  }
+}

@@ -1,0 +1,16 @@
+node_modules
+dist
+**/dist
+build
+**/build
+.turbo
+**/.turbo
+.medusa
+**/.medusa
+.cache
+**/.cache
+coverage
+pnpm-lock.yaml
+**/*.tsbuildinfo
+*.min.js
+*.min.css
