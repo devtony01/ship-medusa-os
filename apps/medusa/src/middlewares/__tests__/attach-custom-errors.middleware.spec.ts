@@ -1,36 +1,16 @@
-import { MedusaError } from '@medusajs/framework/utils';
-
 import type { MedusaNextFunction, MedusaRequest, MedusaResponse, ValidationErrors } from 'app-types';
 
-import { attachCustomErrors, attachCustomProperties, routeErrorHandler } from '../index';
+import { attachCustomErrors } from '../attach-custom-errors.middleware';
 
 interface MockResponseState {
-  statusCode: number;
-  jsonData: unknown;
   redirectUrl: string | null;
-  headersSent: boolean;
 }
 
 type MockResponse = MedusaResponse & MockResponseState;
 
-const createMockResponse = (headersSent = false): MockResponse => {
-  const state: MockResponseState = {
-    statusCode: 200,
-    jsonData: null,
-    redirectUrl: null,
-    headersSent,
-  };
-
+const createMockResponse = (): MockResponse => {
   const res = {
-    ...state,
-    status(code: number) {
-      this.statusCode = code;
-      return this;
-    },
-    json(data: unknown) {
-      this.jsonData = data;
-      return this;
-    },
+    redirectUrl: null as string | null,
     redirect(url: string) {
       this.redirectUrl = url;
     },
@@ -39,17 +19,16 @@ const createMockResponse = (headersSent = false): MockResponse => {
   return res as unknown as MockResponse;
 };
 
-const createMockRequest = (overrides: Partial<MedusaRequest> = {}): MedusaRequest => {
+const createMockRequest = (): MedusaRequest => {
   return {
     params: {},
     query: {},
     body: {},
     headers: {},
-    ...overrides,
   } as unknown as MedusaRequest;
 };
 
-describe('attachCustomErrors middleware (Unit)', () => {
+describe('attachCustomErrors middleware', () => {
   it('should attach error helper methods to response and call next', () => {
     const req = createMockRequest();
     const res = createMockResponse();
@@ -154,88 +133,5 @@ describe('attachCustomErrors middleware (Unit)', () => {
     const expectedUrl = new URL('http://localhost:3000/auth');
     expectedUrl.searchParams.set('error', encodeURIComponent('Invalid token'));
     expect(res.redirectUrl).toBe(expectedUrl.toString());
-  });
-});
-
-describe('attachCustomProperties middleware (Unit)', () => {
-  it('should initialize req.validatedData as empty object and call next', () => {
-    const req = createMockRequest();
-    const res = createMockResponse();
-    let nextCalled = false;
-    const next: MedusaNextFunction = () => {
-      nextCalled = true;
-    };
-
-    attachCustomProperties(req, res, next);
-
-    expect(nextCalled).toBe(true);
-    expect(req.validatedData).toEqual({});
-  });
-});
-
-describe('routeErrorHandler middleware (Unit)', () => {
-  it('should delegate to next(err) if headers are already sent', () => {
-    const req = createMockRequest();
-    const res = createMockResponse(true);
-    let forwardedError: unknown = null;
-    const next: MedusaNextFunction = (err) => {
-      forwardedError = err;
-    };
-
-    const testError = new Error('Already streamed');
-    routeErrorHandler(testError, req, res, next);
-
-    expect(forwardedError).toBe(testError);
-    expect(res.jsonData).toBeNull();
-  });
-
-  it('should format clientErrors and return proper status code', () => {
-    const req = createMockRequest();
-    const res = createMockResponse();
-    const clientErr = Object.assign(new Error('Validation failed'), {
-      status: 422,
-      clientErrors: { email: ['Email already exists'] },
-    });
-
-    routeErrorHandler(clientErr, req, res, () => {});
-
-    expect(res.statusCode).toBe(422);
-    expect(res.jsonData).toEqual({
-      errors: { email: ['Email already exists'] },
-    });
-  });
-
-  it('should map MedusaError.Types to proper HTTP status codes', () => {
-    const notFoundError = new MedusaError(MedusaError.Types.NOT_FOUND, 'Entity not found');
-    const unauthorizedError = new MedusaError(MedusaError.Types.UNAUTHORIZED, 'Please sign in');
-    const conflictError = new MedusaError(MedusaError.Types.CONFLICT, 'Already exists');
-
-    const req = createMockRequest();
-
-    const res1 = createMockResponse();
-    routeErrorHandler(notFoundError, req, res1, () => {});
-    expect(res1.statusCode).toBe(404);
-    expect(res1.jsonData).toEqual({ errors: { global: 'Entity not found' } });
-
-    const res2 = createMockResponse();
-    routeErrorHandler(unauthorizedError, req, res2, () => {});
-    expect(res2.statusCode).toBe(401);
-    expect(res2.jsonData).toEqual({ errors: { global: 'Please sign in' } });
-
-    const res3 = createMockResponse();
-    routeErrorHandler(conflictError, req, res3, () => {});
-    expect(res3.statusCode).toBe(409);
-    expect(res3.jsonData).toEqual({ errors: { global: 'Already exists' } });
-  });
-
-  it('should return 500 for unhandled generic errors', () => {
-    const req = createMockRequest();
-    const res = createMockResponse();
-    const err = new Error('Database connection dropped');
-
-    routeErrorHandler(err, req, res, () => {});
-
-    expect(res.statusCode).toBe(500);
-    expect(res.jsonData).toEqual({ errors: { global: 'Database connection dropped' } });
   });
 });
