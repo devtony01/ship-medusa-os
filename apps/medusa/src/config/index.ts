@@ -14,6 +14,7 @@ const schema = z.object({
   AUTH_CORS: z.string().default('http://localhost:5173,http://localhost:9000'),
   JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
   COOKIE_SECRET: z.string().min(1, 'COOKIE_SECRET is required'),
+  WEB_URL: z.string().default('http://localhost:3000'),
 });
 
 export type AppConfig = z.infer<typeof schema>;

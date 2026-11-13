@@ -9,8 +9,17 @@ catalog:
   prettier: 3.6.2
   lint-staged: 15.4.3
   zod: 3.25.76
+  tsc-alias: ^1.8.16
+  rimraf: ^6.0.1
 
   "@types/node": 20.11.15
+
+  # Testing
+  jest: 29.7.0
+  "@types/jest": 29.5.13
+  "@swc/core": 1.5.7
+  "@swc/jest": 0.2.36
+  "@medusajs/test-utils": 2.11.1
 
   "@medusajs/framework": 2.11.1
   "@medusajs/medusa": 2.11.1

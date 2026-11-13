@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "medusa build",
+    "build": "medusa build && pnpm resolve:aliases",
+    "resolve:aliases": "tsc --showConfig -p tsconfig.json > tsconfig.resolved.json && tsc-alias -p tsconfig.resolved.json && rimraf tsconfig.resolved.json",
     "start": "medusa start",
     "dev": "medusa develop",
     "migrate": "medusa db:migrate",
@@ -23,13 +24,19 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@swc/core": "1.5.7",
+    "@medusajs/test-utils": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/http-errors": "2.0.4",
+    "@types/jest": "catalog:",
     "eslint-config": "workspace:*",
+    "jest": "catalog:",
     "lint-staged": "catalog:",
     "prettier": "catalog:",
     "prettier-config": "workspace:*",
+    "rimraf": "catalog:",
     "ts-node": "10.9.2",
+    "tsc-alias": "catalog:",
     "tsconfig": "workspace:*",
     "typescript": "catalog:"
   },
