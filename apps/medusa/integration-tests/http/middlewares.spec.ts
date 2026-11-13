@@ -11,6 +11,13 @@ interface PropertiesResponseBody {
   hasValidatedData: boolean;
 }
 
+interface ValidatedResponseBody {
+  validatedData: {
+    email: string;
+    count: number;
+  };
+}
+
 interface HttpClientResponse<T = unknown> {
   status: number;
   data: T;
@@ -137,6 +144,39 @@ medusaIntegrationTestRunner({
 
         expect(response.status).toBe(302);
         expect(response.headers.location).toContain('error=Session');
+      });
+
+      it('post /test-middlewares with valid payload should coerce, trim, and attach req.validatedData', async () => {
+        const response = await client.post<ValidatedResponseBody>('/test-middlewares?count=3', {
+          email: '  chef@shipmedusa.com  ',
+        });
+
+        expect(response.status).toBe(200);
+        expect(response.data).toEqual({
+          validatedData: {
+            email: 'chef@shipmedusa.com',
+            count: 3,
+          },
+        });
+      });
+
+      it('post /test-middlewares with invalid payload should format Zod validation errors via routeErrorHandler', async () => {
+        const response = await client.post<ErrorResponseBody>(
+          '/test-middlewares',
+          {
+            email: 'invalid-email',
+            count: 0,
+          },
+          { validateStatus: () => true },
+        );
+
+        expect(response.status).toBe(400);
+        expect(response.data).toEqual({
+          errors: {
+            email: ['Invalid email address'],
+            count: ['Count must be a positive integer'],
+          },
+        });
       });
     });
   },

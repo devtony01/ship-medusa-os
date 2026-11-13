@@ -30,3 +30,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse): Promise<void
 
   handler(req, res);
 };
+
+export const POST = async (req: MedusaRequest, res: MedusaResponse): Promise<void> => {
+  res.json({
+    validatedData: req.validatedData,
+  });
+};
